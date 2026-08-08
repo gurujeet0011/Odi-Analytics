@@ -1,7 +1,5 @@
 # ODI Cricket Analytics Dashboard (Flask + ML)
 
-# ODI Cricket Analytics Dashboard
-
 **🔗 Live Demo:** https://odi-analytics.onrender.com
 
 A Flask-based web dashboard with ML models to predict team & player 
