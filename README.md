@@ -1,7 +1,12 @@
 # ODI Cricket Analytics Dashboard (Flask + ML)
 
-A full web dashboard for the ODI dataset: team & player stats, search, charts,
-and machine-learning predictions of future performance.
+# ODI Cricket Analytics Dashboard
+
+**🔗 Live Demo:** https://odi-analytics.onrender.com
+
+A Flask-based web dashboard with ML models to predict team & player 
+performance from historical ODI data.
+
 
 ## What's inside
 - `app.py` — Flask app (routes + prediction logic)
