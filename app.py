@@ -208,6 +208,6 @@ def api_search():
     matches = [p for p in pool if q in p.lower()][:15]
     return jsonify(matches)
 
-
+import os
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
