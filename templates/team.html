@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ team }} — ODI Analytics{% endblock %}
+{% block content %}
+<a class="back-link" href="/">&larr; Back to dashboard</a>
+<div class="page-title compact-title"><h1>{{ team }}</h1></div>
+<p class="subtitle">All-time record: {{ overall.matches }} matches · {{ overall.wins }} wins · {{ overall.win_rate }}% win rate</p>
+
+<div class="grid grid-2 section-gap">
+  <div class="card">
+    <h3>Win Rate Trend by Season</h3>
+    <div class="chart-wrap"><canvas id="seasonChart"></canvas></div>
+  </div>
+  <div class="prediction-box">
+    <h3>🔮 ML Prediction — Next Match</h3>
+    {% if pred_prob is not none %}
+    <div class="pred-value">{{ (pred_prob*100)|round(1) }}%</div>
+    <p class="note">Estimated win probability, based on the team's recent form (win rate, run rate, and wickets taken over its last 5–10 matches), from a RandomForest classifier trained on historical match outcomes.</p>
+    {% else %}
+    <p>Not enough recent match data to generate a prediction.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Top Performers for {{ team }}</h3>
+    <table>
+      <tr><th>Player</th><th>Runs</th><th>Wickets</th><th>Fantasy Pts</th></tr>
+      {% for p in top_players %}
+      <tr>
+        <td><a href="/player/{{ p.player }}">{{ p.player }}</a></td>
+        <td>{{ p.runs }}</td><td>{{ p.wickets }}</td><td>{{ p.fantasy_points|round(0) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="card">
+    <h3>Season-by-Season Record</h3>
+    <table>
+      <tr><th>Season</th><th>Matches</th><th>Win %</th></tr>
+      {% for s in seasons %}
+      <tr><td>{{ s.season }}</td><td>{{ s.matches }}</td><td>{{ s.win_rate }}%</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<script>
+const ctx = document.getElementById('seasonChart');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: [{% for s in seasons %}"{{ s.season }}",{% endfor %}],
+    datasets: [{
+      label: 'Win Rate (%)',
+      data: [{% for s in seasons %}{{ s.win_rate }},{% endfor %}],
+      borderColor: '#2fb7a5',
+      backgroundColor: 'rgba(47,183,165,0.15)',
+      fill: true, tension: 0.3,
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false }
+});
+</script>
+{% endblock %}

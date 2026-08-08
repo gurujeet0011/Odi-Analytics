@@ -1,0 +1,134 @@
+:root {
+  --navy: #10233d;
+  --navy2: #16324f;
+  --accent: #2fb7a5;
+  --accent2: #e8a33d;
+  --bg: #f4f7f9;
+  --card: #ffffff;
+  --text: #1c2b3a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.topbar {
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+.brand {
+  color: white;
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.search-wrap { position: relative; width: 320px; }
+#global-search {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+}
+.search-results {
+  display: none;
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  background: white;
+  color: var(--text);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  max-height: 320px;
+  overflow-y: auto;
+}
+.result-item {
+  display: block;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.result-item:hover { background: #f1f5f9; }
+.result-item .tag { float: right; color: var(--muted); font-size: 0.75rem; }
+.content { max-width: 1180px; margin: 0 auto; padding: 26px 20px 60px; }
+.footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px; }
+
+h1, h2, h3 { color: var(--navy); }
+.page-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px;}
+.subtitle { color: var(--muted); margin-top: 0; margin-bottom: 24px; }
+
+.grid { display: grid; gap: 18px; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: 2fr 1fr; }
+@media (max-width: 900px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(16,35,61,0.06);
+}
+.card h3 { margin-top: 0; font-size: 1rem; color: var(--navy2); }
+
+.stat-card { text-align: center; }
+.stat-card .value { font-size: 1.9rem; font-weight: 800; color: var(--accent); }
+.stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.04em; }
+tr:hover td { background: #f8fafc; }
+td a, th a { color: var(--navy2); text-decoration: none; font-weight: 600; }
+td a:hover { text-decoration: underline; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.badge-good { background: #dcfce7; color: #15803d; }
+.badge-mid { background: #fef3c7; color: #92400e; }
+.badge-low { background: #fee2e2; color: #b91c1c; }
+
+.prediction-box {
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  color: white;
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+.prediction-box h3 { color: white; margin-top: 0; }
+.prediction-box .pred-value { font-size: 2.1rem; font-weight: 800; color: var(--accent2); }
+.prediction-metrics { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 10px; }
+.prediction-metrics div { min-width: 120px; }
+.prediction-metrics .num { font-size: 1.5rem; font-weight: 700; }
+.prediction-metrics .lbl { font-size: 0.78rem; opacity: 0.8; }
+
+.select-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.select-row select {
+  padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.9rem; background: white;
+}
+.chart-wrap { position: relative; height: 300px; }
+.back-link { color: var(--navy2); text-decoration: none; font-size: 0.85rem; }
+.back-link:hover { text-decoration: underline; }

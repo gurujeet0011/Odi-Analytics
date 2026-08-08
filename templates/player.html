@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ player }} — ODI Analytics{% endblock %}
+{% block content %}
+<a class="back-link" href="/">&larr; Back to dashboard</a>
+<div class="page-title compact-title"><h1>{{ player }}</h1></div>
+<p class="subtitle">
+  {% if career.team %}{{ career.team }} · {% endif %}
+  {% if career.total_matches_played %}{{ career.total_matches_played }} career matches{% endif %}
+</p>
+
+<div class="grid grid-2 section-gap">
+  <div class="card">
+    <h3>Runs / Wickets by Season</h3>
+    <div class="chart-wrap"><canvas id="playerChart"></canvas></div>
+  </div>
+  <div class="prediction-box">
+    <h3>🔮 ML Prediction — Next Season</h3>
+    {% if prediction %}
+    <div class="prediction-metrics">
+      <div><div class="num">{{ prediction.predicted_next_runs }}</div><div class="lbl">Predicted Runs</div></div>
+      <div><div class="num">{{ prediction.predicted_next_wickets }}</div><div class="lbl">Predicted Wickets</div></div>
+      <div><div class="num">{{ prediction.predicted_next_fantasy_points }}</div><div class="lbl">Predicted Fantasy Pts</div></div>
+    </div>
+    <p class="note">Estimated from a RandomForest model trained on how players' stats historically evolved from one season to the next, using this player's most recent season as input.</p>
+    {% else %}
+    <p>Not enough season history to generate a prediction.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Career Summary</h3>
+    <table>
+      {% if career.total_runs is defined %}<tr><td>Total Runs</td><td>{{ career.total_runs }}</td></tr>{% endif %}
+      {% if career.average is defined and career.average %}<tr><td>Batting Average</td><td>{{ career.average|round(2) }}</td></tr>{% endif %}
+      {% if career.strike_rate is defined %}<tr><td>Strike Rate</td><td>{{ career.strike_rate|round(2) }}</td></tr>{% endif %}
+      {% if career.total_wickets_taken is defined %}<tr><td>Total Wickets</td><td>{{ career.total_wickets_taken }}</td></tr>{% endif %}
+      {% if career.economy_rate is defined %}<tr><td>Economy Rate</td><td>{{ career.economy_rate|round(2) }}</td></tr>{% endif %}
+      {% if career.matches_won is defined %}<tr><td>Matches Won</td><td>{{ career.matches_won }}</td></tr>{% endif %}
+      {% if career.player_of_match_awards is defined %}<tr><td>Player of the Match Awards</td><td>{{ career.player_of_match_awards }}</td></tr>{% endif %}
+    </table>
+  </div>
+  <div class="card">
+    <h3>Season-by-Season Log</h3>
+    <table>
+      <tr><th>Season</th><th>Runs</th><th>Wkts</th><th>Fantasy Pts</th></tr>
+      {% for s in seasons %}
+      <tr><td>{{ s.season }}</td><td>{{ s.runs }}</td><td>{{ s.wickets }}</td><td>{{ s.fantasy_points|round(0) }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<script>
+const ctx = document.getElementById('playerChart');
+new Chart(ctx, {
+  data: {
+    labels: [{% for s in seasons %}"{{ s.season }}",{% endfor %}],
+    datasets: [
+      { type: 'bar', label: 'Runs', data: [{% for s in seasons %}{{ s.runs }},{% endfor %}], backgroundColor: '#2fb7a5', yAxisID: 'y' },
+      { type: 'line', label: 'Wickets', data: [{% for s in seasons %}{{ s.wickets }},{% endfor %}], borderColor: '#e8a33d', yAxisID: 'y1', tension: 0.3 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: { type: 'linear', position: 'left', title: { display: true, text: 'Runs' } },
+      y1: { type: 'linear', position: 'right', title: { display: true, text: 'Wickets' }, grid: { drawOnChartArea: false } },
+    }
+  }
+});
+</script>
+{% endblock %}

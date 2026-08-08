@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}ODI Analytics Dashboard{% endblock %}
+{% block content %}
+<div class="page-title"><h1>ODI Cricket Analytics Dashboard</h1></div>
+<p class="subtitle">Explore team & player stats and ML-predicted future performance, built from the full ODI dataset.</p>
+
+<div class="grid grid-4 section-gap">
+  <div class="card stat-card"><div class="value">{{ stats.total_matches }}</div><div class="label">Matches Analyzed</div></div>
+  <div class="card stat-card"><div class="value">{{ stats.total_teams }}</div><div class="label">Teams</div></div>
+  <div class="card stat-card"><div class="value">{{ stats.total_players }}</div><div class="label">Players</div></div>
+  <div class="card stat-card"><div class="value">45</div><div class="label">Seasons Covered</div></div>
+</div>
+
+<div class="select-row">
+  <select id="team-jump" onchange="if(this.value) window.location='/team/'+encodeURIComponent(this.value)">
+    <option value="">Jump to a team…</option>
+    {% for t in teams %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+  </select>
+  <select id="player-jump" onchange="if(this.value) window.location='/player/'+encodeURIComponent(this.value)">
+    <option value="">Jump to a player…</option>
+    {% for p in players %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+  </select>
+</div>
+
+<div class="grid grid-2 section-gap">
+  <div class="card">
+    <h3>Top Teams by Win Rate</h3>
+    <div class="chart-wrap"><canvas id="teamChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>🔮 Highest Predicted Win Probability (next match)</h3>
+    <table>
+      <tr><th>Team</th><th>Predicted Win %</th></tr>
+      {% for t in top_win_prob %}
+      <tr><td><a href="/team/{{ t.team }}">{{ t.team }}</a></td><td>{{ (t.predicted_win_prob*100)|round(1) }}%</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="grid grid-3">
+  <div class="card">
+    <h3>🏏 Top Run Scorers (career)</h3>
+    <table>
+      <tr><th>Player</th><th>Runs</th></tr>
+      {% for p in top_batters %}
+      <tr><td><a href="/player/{{ p.player_name }}">{{ p.player_name }}</a></td><td>{{ p.total_runs }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="card">
+    <h3>🎯 Top Wicket Takers (career)</h3>
+    <table>
+      <tr><th>Player</th><th>Wickets</th></tr>
+      {% for p in top_bowlers %}
+      <tr><td><a href="/player/{{ p.player_name }}">{{ p.player_name }}</a></td><td>{{ p.total_wickets_taken }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="card">
+    <h3>🔮 Predicted Top Performers (next season)</h3>
+    <table>
+      <tr><th>Player</th><th>Pred. Fantasy Pts</th></tr>
+      {% for p in top_predicted %}
+      <tr><td><a href="/player/{{ p.player }}">{{ p.player }}</a></td><td>{{ p.predicted_next_fantasy_points }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<script>
+const teamCtx = document.getElementById('teamChart');
+new Chart(teamCtx, {
+  type: 'bar',
+  data: {
+    labels: [{% for t in top_teams %}"{{ t.team }}",{% endfor %}],
+    datasets: [{
+      label: 'Win Rate (%)',
+      data: [{% for t in top_teams %}{{ t.win_rate }},{% endfor %}],
+      backgroundColor: '#2fb7a5',
+      borderRadius: 6,
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

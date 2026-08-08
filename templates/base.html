@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}ODI Analytics{% endblock %}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a href="{{ url_for('dashboard') }}" class="brand">ODI Analytics</a>
+  <div class="search-wrap">
+    <input id="global-search" type="text" placeholder="Search a player or team..." autocomplete="off">
+    <div id="search-results" class="search-results"></div>
+  </div>
+</header>
+<main class="content">
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">Built from the ODI dataset · Predictions are ML estimates, not guarantees.</footer>
+
+<script>
+const searchInput = document.getElementById('global-search');
+const resultsBox = document.getElementById('search-results');
+let debounceTimer;
+searchInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  const q = searchInput.value.trim();
+  if (!q) { resultsBox.style.display = 'none'; return; }
+  debounceTimer = setTimeout(async () => {
+    const [players, teams] = await Promise.all([
+      fetch(`/api/search?q=${encodeURIComponent(q)}&type=player`).then(r => r.json()),
+      fetch(`/api/search?q=${encodeURIComponent(q)}&type=team`).then(r => r.json()),
+    ]);
+    let html = '';
+    teams.forEach(t => html += `<a class="result-item" href="/team/${encodeURIComponent(t)}">🏳️ ${t} <span class="tag">team</span></a>`);
+    players.forEach(p => html += `<a class="result-item" href="/player/${encodeURIComponent(p)}">🧑 ${p} <span class="tag">player</span></a>`);
+    resultsBox.innerHTML = html || '<div class="result-item empty">No matches</div>';
+    resultsBox.style.display = 'block';
+  }, 200);
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrap')) resultsBox.style.display = 'none';
+});
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
